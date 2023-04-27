@@ -73,7 +73,7 @@ public class UserServiceImp implements UserService{
             userData.setOtp(genarateOtp);
             userRepo.save(userData);
             emailService.sendEmail(userData.getEmail(),"The is Register done OTP sent  ","hi....."+userData.getFirstName()+userData.getLastName() + "\n The OTP is "+genarateOtp + " ");
-            return new ResponseDto("The data rigisterd succsusfully",userDto) ;
+            return new ResponseDto("The data registered succsusfully",userDto) ;
         }
     }
 
@@ -82,7 +82,7 @@ public class UserServiceImp implements UserService{
      */
     @Override
     public UserModel getById(int id) {
-        return userRepo.findById(id).orElseThrow(() -> new CustomException(" Employee Not found .. wih id: "+ id));
+        return userRepo.findById(id).orElseThrow(() -> new CustomException(" User Not found .. wih id: "+ id));
 
     }
     @Override
@@ -106,7 +106,7 @@ public class UserServiceImp implements UserService{
     public UserModel getdataByToken(String token) {
         int id= jwtToken.decodeToken(token);
         System.out.println(id+"id -------------");
-        return userRepo.findById(id).orElseThrow(() -> new CustomException("Employee Not found :- "+id));
+        return userRepo.findById(id).orElseThrow(() -> new CustomException("User Not found :- "+id));
     }
 
     @Override
