@@ -1,6 +1,6 @@
 package com.bridgelabz.BookStore.controller;
 
-import com.bridgelabz.BookStore.dto.ResponseDto;
+import com.bridgelabz.BookStore.dto.ResponceDto;
 import com.bridgelabz.BookStore.dto.Verification;
 import com.bridgelabz.BookStore.services.PasswordReset;
 import com.bridgelabz.BookStore.services.UserService;
@@ -13,16 +13,16 @@ public class PasswordResetController {
     private PasswordReset passwordReset;
     @Autowired
     private UserService regstationService;
-    @PostMapping("forgot")
+    @PostMapping("/forgot")
     public String forgetPassword(@RequestParam String email){
         return passwordReset.forgotPassword(email);
     }
-    @PutMapping("/resetpassword")
+    @PutMapping("/reset")
     public String resetPassword(@RequestParam String email,@RequestParam String password){
         return passwordReset.resetpassword(email,password);
     }
     @PutMapping("/varify")
-    public ResponseDto validation(@RequestBody Verification validation ){
+    public ResponceDto validation(@RequestBody Verification validation ){
         return regstationService.varify(validation);
     }
 }

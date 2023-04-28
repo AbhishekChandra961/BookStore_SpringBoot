@@ -1,8 +1,8 @@
 package com.bridgelabz.BookStore.services;
 
 import com.bridgelabz.BookStore.dto.BookStoreDto;
-import com.bridgelabz.BookStore.dto.ResponseDto;
-import com.bridgelabz.BookStore.exception.CustomException;
+import com.bridgelabz.BookStore.dto.ResponceDto;
+import com.bridgelabz.BookStore.exception.CustomeException;
 import com.bridgelabz.BookStore.model.BookStore;
 import com.bridgelabz.BookStore.model.UserModel;
 import com.bridgelabz.BookStore.repo.BookRepo;
@@ -19,33 +19,31 @@ public class BookServiceImp implements BookService{
     @Autowired
     private BookRepo bookRepo;
     @Autowired
+    private UserService userService;
+    @Autowired
     private UserRepo userRepo;
     @Autowired
     private JWTToken jwtToken;
-
     @Override
-    public ResponseDto addBook(BookStoreDto bookStoreDto) {
+    public ResponceDto addBook(BookStoreDto bookStoreDto) {
         BookStore books=new BookStore(bookStoreDto);
         bookRepo.save(books);
-        return new ResponseDto("The Book Detailes Added ",books) ;
-    }
-
-    @Override
-    public BookStore updateBook(int id,BookStoreDto bookStoreDto) {
-        BookStore bookStoreData=this.getById(id);
-        bookStoreData.updateBook(bookStoreDto);
-        return bookRepo.save(bookStoreData);
+        return new ResponceDto("The Book Detailes Added ",books) ;
     }
     @Override
-    public BookStore getById(int id) {
-        return bookRepo.findById(id).orElseThrow(() -> new CustomException(" Data Not found .. wih id: "+ id));
+    public BookStore updateBook(int book_id,BookStoreDto bookStoreDto) {
+        BookStore bookStore=this.getById(book_id);
+        bookStore.updateBook(bookStoreDto);
+        return bookRepo.save(bookStore);
     }
-
+    @Override
+    public BookStore getById(int book_id) {
+        return bookRepo.findById(book_id).orElseThrow(() -> new CustomeException(" Data Not found .. wih id: "+ book_id));
+    }
     @Override
     public List<BookStore> getAllData() {
         return bookRepo.findAll();
     }
-
     @Override
     public List<BookStore> getBookByName(String name) {
         List<BookStore> books =bookRepo.getBookByName(name);
@@ -56,27 +54,46 @@ public class BookServiceImp implements BookService{
     }
 
     @Override
-    public ResponseDto deleteById(int id) {
-        BookStore book=this.getById(id);
-        bookRepo.deleteById(id);
-        return new ResponseDto("The Data has deleted",id);
+    public ResponceDto deleteById(int book_id) {
+        BookStore book=this.getById(book_id);
+        bookRepo.deleteById(book_id);
+        return new ResponceDto("The Data has deleted",book_id);
+    }
+
+    @Override
+    public String changeBookPrice(String token, int book_id, float price) {
+        int useId=jwtToken.decodeToken(token);
+//        UserModel data=userService.getById(useId);
+        Optional<UserModel> user = userRepo.findById(useId);
+//        System.out.println("id"+data);
+        System.out.println("user "+user);
+        if(user!=null){
+            Optional<BookStore> bookStore=bookRepo.findById(book_id);
+//            BookStore bookStore=this.getById(id);
+            bookStore.get().setPrice(price);
+            bookRepo.save(bookStore.get());
+            return "Ther Price changed.........";
+        }
+        else {
+            return "The Price Cant changed";
+        }
     }
     @Override
-    public String changeBookPrice( int id, float price) {
-//        int idByToken = jwtToken.decodeToken(token);
-        UserModel userData = userRepo.findById(id).orElseThrow(() -> new CustomException(" User not found with token :: "));
-        BookStore bookData = bookRepo.findById(id).orElseThrow(() -> new CustomException(" Invalid Book ID,Please Try With Different ID"));
-        bookData.setPrice(price);
-        bookRepo.save(bookData);
-        return "Successfully Changed the price";
-    }
-    @Override
-    public String changeBookQuantity(int id,int quantity){
-//        int idByToken = jwtToken.decodeToken(token);
-        UserModel userData = userRepo.findById(id).orElseThrow(() -> new CustomException(" User not found with token :: "));
-        BookStore bookData = bookRepo.findById(id).orElseThrow(() -> new CustomException(" Invalid Book ID,Please Try With Different ID"));
-        bookData.setQuantity(quantity);
-        bookRepo.save(bookData);
-        return "Successfully Changed the quantity";
+    public String changeBookQuantity(String token, int book_id, int quantity) {
+        int useId=jwtToken.decodeToken(token);
+//        UserModel data=userService.getById(useId);
+        Optional<UserModel> user = userRepo.findById(useId);
+//        System.out.println("id"+data);
+        System.out.println("user "+user);
+        if(user!=null){
+            Optional<BookStore> bookStore=bookRepo.findById(book_id);
+//            BookStore bookStore=this.getById(book_id);
+            bookStore.get().setQuantity(quantity);
+            bookRepo.save(bookStore.get());
+            return "The quantity changed.........";
+        }
+        else {
+            return "The quantity Cant changed";
+        }
     }
 }

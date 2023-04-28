@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JWTToken {
-    private final String SECRET="Abhishek";
+    private final String SECRET="Hariprasad";
     public String createToken(int empId){
         String token ;
         token= JWT.create().withClaim("id",empId).sign(Algorithm.HMAC256(SECRET));
@@ -15,7 +15,7 @@ public class JWTToken {
     public int decodeToken(String token){
         int id=0;
         if(token!=null){
-            id= JWT.require(Algorithm.
+            id=JWT.require(Algorithm.
                             HMAC256(SECRET)).build().
                     verify(token).getClaim("id").
                     asInt();

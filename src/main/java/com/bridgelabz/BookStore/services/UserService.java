@@ -1,7 +1,7 @@
 package com.bridgelabz.BookStore.services;
 
 import com.bridgelabz.BookStore.dto.Login;
-import com.bridgelabz.BookStore.dto.ResponseDto;
+import com.bridgelabz.BookStore.dto.ResponceDto;
 import com.bridgelabz.BookStore.dto.UserDto;
 import com.bridgelabz.BookStore.dto.Verification;
 import com.bridgelabz.BookStore.model.UserModel;
@@ -11,11 +11,11 @@ import java.util.List;
 public interface UserService {
     List<UserModel> getAllData() ;
 
-    ResponseDto login(Login login) ;
+    ResponceDto login(Login login) ;
 
-    ResponseDto varify(Verification verification) ;
+    ResponceDto varify(Verification verification) ;
 
-    ResponseDto register(UserDto userDto);
+    ResponceDto register(UserDto userDto);
 
     UserModel getById(int id);
 
@@ -26,4 +26,5 @@ public interface UserService {
     UserModel getdataByToken(String token);
 
     String deletedataByToken(String token);
+
 }

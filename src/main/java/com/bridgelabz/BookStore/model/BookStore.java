@@ -9,32 +9,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "book_store")
 @Data
 @NoArgsConstructor
 public class BookStore {
     @Id
     @GeneratedValue
-    private int id;
+    private int book_id;
     private String name;
     private String author;
     private String description;
-
     private String logo;
     private Float price;
     private int quantity;
 
-    public void updateBook(BookStoreDto bookDto){
-        this.name=bookDto.getName();
-        this.author=bookDto.getAuthor();
-        this.description= bookDto.getDescription();
-        this.logo=bookDto.getLogo();
-        this.price= bookDto.getPrice();
-        this.quantity= bookDto.getQuantity();
+    public void updateBook(BookStoreDto bookStoreDto){
+        this.name=bookStoreDto.getName();
+        this.author=bookStoreDto.getAuthor();
+        this.description= bookStoreDto.getDescription();
+        this.logo=bookStoreDto.getLogo();
+        this.price= bookStoreDto.getPrice();
+        this.quantity= bookStoreDto.getQuantity();
     }
     public BookStore(BookStoreDto bookStoreDto){
         this.updateBook(bookStoreDto);
     }
-
-
 }

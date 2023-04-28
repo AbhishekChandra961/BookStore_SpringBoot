@@ -1,10 +1,10 @@
 package com.bridgelabz.BookStore.services;
 
 import com.bridgelabz.BookStore.dto.Login;
-import com.bridgelabz.BookStore.dto.ResponseDto;
+import com.bridgelabz.BookStore.dto.ResponceDto;
 import com.bridgelabz.BookStore.dto.UserDto;
 import com.bridgelabz.BookStore.dto.Verification;
-import com.bridgelabz.BookStore.exception.CustomException;
+import com.bridgelabz.BookStore.exception.CustomeException;
 import com.bridgelabz.BookStore.model.UserModel;
 import com.bridgelabz.BookStore.repo.UserRepo;
 import com.bridgelabz.BookStore.util.EmailService;
@@ -27,53 +27,60 @@ public class UserServiceImp implements UserService{
 
 
     @Override
-    public ResponseDto login(Login login) {
+    public ResponceDto login(Login login) {
         String email =login.getEmail();
         String password=login.getPassword();
         String varifyPassword=userRepo.getPassword(email);
-        String token=userRepo.getVarifyOtp(email);
-        if (password.equals(varifyPassword) &&token!=null ){
-            return new ResponseDto("login successfull..... for "+ "token \n "+token,login.getEmail());
+        UserModel id=userRepo.findEmail(email);
+        boolean varify=userRepo.getVarifyOtp(email);
+        System.out.println("token result -"+varify);
+        if (password.equals(varifyPassword) &&varify==true ){
+            Optional<UserModel> data=userRepo.findById(id.getId());
+            String token=jwtToken.createToken(id.getId());
+            data.get().setToken(token);
+            userRepo.save(data.get());
+            return new ResponceDto("login successfull..... for ", "token :- "+token);
         }
         else{
-            if(varifyPassword!=null &&token == null){
-                return new ResponseDto("The validation not done ","Validate the otp to login");
+            if(varifyPassword!=null &&varify == false){
+                return new ResponceDto("The validation not done ","Validate the otp to login");
             }else {
-                return new ResponseDto(" check the email and password", "The incorrect credentials");
+                return new ResponceDto(" check the email and password", "The incorrect credentials");
             }
         }
     }
-
     @Override
-    public ResponseDto varify(Verification verification) {
+    public ResponceDto varify(Verification verification) {
         String email=verification.getEmail();
-        int id =userRepo.findIdByEmail(email);
-        Optional<UserModel> data=userRepo.findById(id);
-        if (verification.getOtp()==data.get().getOtp()){
-            String token=jwtToken.createToken(id);
-            data.get().setVarifyOtp(true);
-            data.get().setToken(token);
-            userRepo.save(data.get());
-            return new ResponseDto("The data registerd succsusfully  and genarated token ", "Token is :- "+token);
-        }else {
-            return new ResponseDto("Varification not done check the mail ","give correct data");
+        UserModel id =userRepo.findEmail(email);
+        if(id!=null) {
+            Optional<UserModel> data = userRepo.findById(id.getId());
+            if (verification.getOtp() == data.get().getOtp()) {
+                data.get().setVarifyOtp(true);
+                userRepo.save(data.get());
+                return new ResponceDto("The Varification done for email ", email);
+            } else {
+                return new ResponceDto("Varification not done check the mail ", "give correct data");
+            }
+        }else{
+            return new ResponceDto("The email is not registerd ",email);
         }
 
     }
 
     @Override
-    public ResponseDto register(UserDto userDto) {
+    public ResponceDto register(UserDto userDto) {
         String email=userDto.getEmail();
-        String mail=userRepo.findEmail(email);
+        UserModel mail=userRepo.findEmail(email);
         if(mail!=null){
-            return new ResponseDto("Enter the unique Email id ",userDto.getEmail());
+            return new ResponceDto("Enter the unique Email id ",userDto.getEmail());
         }else {
             UserModel userData=new UserModel(userDto);
             int genarateOtp=(int) ((Math.random() * 999999) % 899998) + 100001;
             userData.setOtp(genarateOtp);
             userRepo.save(userData);
             emailService.sendEmail(userData.getEmail(),"The is Register done OTP sent  ","hi....."+userData.getFirstName()+userData.getLastName() + "\n The OTP is "+genarateOtp + " ");
-            return new ResponseDto("The data registered succsusfully",userDto) ;
+            return new ResponceDto("The data rigisterd succsusfully",userDto) ;
         }
     }
 
@@ -82,7 +89,7 @@ public class UserServiceImp implements UserService{
      */
     @Override
     public UserModel getById(int id) {
-        return userRepo.findById(id).orElseThrow(() -> new CustomException(" User Not found .. wih id: "+ id));
+        return userRepo.findById(id).orElseThrow(() -> new CustomeException(" Employee Not found .. wih id: "+ id));
 
     }
     @Override
@@ -106,7 +113,7 @@ public class UserServiceImp implements UserService{
     public UserModel getdataByToken(String token) {
         int id= jwtToken.decodeToken(token);
         System.out.println(id+"id -------------");
-        return userRepo.findById(id).orElseThrow(() -> new CustomException("User Not found :- "+id));
+        return userRepo.findById(id).orElseThrow(() -> new CustomeException("Employee Not found :- "+id));
     }
 
     @Override
@@ -116,5 +123,7 @@ public class UserServiceImp implements UserService{
         userRepo.delete(userData);
         return "The data is deleted";
     }
+
+
 
 }

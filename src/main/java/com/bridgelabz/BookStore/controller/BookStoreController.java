@@ -1,11 +1,9 @@
 package com.bridgelabz.BookStore.controller;
 
 import com.bridgelabz.BookStore.dto.BookStoreDto;
-import com.bridgelabz.BookStore.dto.ResponseDto;
+import com.bridgelabz.BookStore.dto.ResponceDto;
 import com.bridgelabz.BookStore.model.BookStore;
-import com.bridgelabz.BookStore.model.UserModel;
 import com.bridgelabz.BookStore.services.BookService;
-import com.bridgelabz.BookStore.services.BookServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,37 +16,37 @@ public class BookStoreController {
     private BookService bookService;
 
     @PostMapping("/add")
-    public ResponseDto addBook(@RequestBody BookStoreDto bookStoreDto){
+    public ResponceDto addBook(@RequestBody BookStoreDto bookStoreDto){
         return bookService.addBook(bookStoreDto);
     }
-    @PutMapping("/update/{id}")
-    public BookStore updateBook(@PathVariable int id , @RequestBody BookStoreDto bookStoreDto){
-        return bookService.updateBook(id,bookStoreDto);
+    @PutMapping("update/{book_id}")
+    public BookStore updateBook(@PathVariable int book_id , @RequestBody BookStoreDto bookStoreDto){
+        return bookService.updateBook(book_id,bookStoreDto);
     }
-    @GetMapping("/{id}")
-    public BookStore getById(@PathVariable int id){
-        return bookService.getById(id);
+    @GetMapping("/{book_id}")
+    public BookStore getById(@PathVariable int book_id){
+        return bookService.getById(book_id);
     }
     @GetMapping("/allbooks")
-    public  ResponseDto getAllData(){
+    public  ResponceDto getAllData(){
         List<BookStore> books=bookService.getAllData();
-        return new ResponseDto("The all Books Present In Store",books);
+        return new ResponceDto("The all Books Present In Store",books);
     }
     @GetMapping("/bookname")
     public List<BookStore> getBookByName(@RequestParam String name){
         return bookService.getBookByName(name);
     }
-    @DeleteMapping("/delete/{id}")
-    public ResponseDto deleteDataById(@PathVariable int id){
-        return bookService.deleteById(id);
-    }
-    @PostMapping("/changeQuantityBook")
-    public String changeQuantity( @RequestParam int id, @RequestParam int quantity) {
-        return bookService.changeBookQuantity( id, quantity);
-    }
-    @PostMapping("/changePriceBook")
-    public String changePrice(@RequestParam int id, @RequestParam float price) {
-        return bookService.changeBookPrice( id, price);
+    @DeleteMapping("/delete/{book_id}")
+    public ResponceDto deleteDataById(@PathVariable int book_id){
+        return bookService.deleteById(book_id);
     }
 
+    @PutMapping("/changePrice/{token}")
+    public String ChangeBookPrice(@PathVariable String token ,@RequestParam int book_id ,@RequestParam float price){
+        return bookService.changeBookPrice(token,book_id,price);
+    }
+    @PutMapping("/changquantity/{token}")
+    public String ChangeBookQuantity(@PathVariable String token ,@RequestParam int book_id ,@RequestParam int quantity){
+        return bookService.changeBookQuantity(token,book_id,quantity);
+    }
 }

@@ -1,6 +1,6 @@
 package com.bridgelabz.BookStore.controller;
 
-import com.bridgelabz.BookStore.dto.ResponseDto;
+import com.bridgelabz.BookStore.dto.ResponceDto;
 import com.bridgelabz.BookStore.dto.UserDto;
 import com.bridgelabz.BookStore.model.UserModel;
 import com.bridgelabz.BookStore.services.UserService;
@@ -13,28 +13,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class UserDataController {
+public class UsersDataController {
     List<UserModel> list=new ArrayList<>();
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseDto getDataByid(@PathVariable int id){
+    public ResponceDto getDataByid(@PathVariable int id){
         UserModel addressBookData = userService.getById(id);
-        ResponseDto responceDto = new ResponseDto("Data is",addressBookData);
+        ResponceDto responceDto = new ResponceDto("Data is",addressBookData);
         return responceDto;
     }
     @GetMapping("/")
-    public ResponseDto getAllData(){
+    public ResponceDto getAllData(){
         List<UserModel> data=userService.getAllData();
-        ResponseDto responceDto =new ResponseDto("The All Employees ",data);
+        ResponceDto responceDto =new ResponceDto("The All Employees ",data);
         return responceDto;
     }
     @PutMapping("/update/{id}")
-    public ResponseDto update(@RequestBody UserDto userDto, @PathVariable int id){
+    public ResponceDto update(@RequestBody UserDto userDto, @PathVariable int id){
         UserModel addressBookData =userService.UpdateEmployee(id,userDto);
-        ResponseDto responceDto = new ResponseDto("Data is",addressBookData);
+        ResponceDto responceDto = new ResponceDto("Data is",addressBookData);
         return responceDto;
     }
     @DeleteMapping("/delete/{id}")
@@ -43,16 +43,16 @@ public class UserDataController {
         return "Deleted the data from the id"+id;
     }
     @GetMapping("/token/{token}")
-    public ResponseEntity<ResponseDto> getDataByToken(@PathVariable String token){
+    public ResponseEntity<ResponceDto> getDataByToken(@PathVariable String token){
         UserModel userData=userService.getdataByToken(token);
-        ResponseDto responceDto = new ResponseDto("Data for the token is-",userData);
+        ResponceDto responceDto = new ResponceDto("Data for the token is-",userData);
 
         return new ResponseEntity<>(responceDto, HttpStatus.CREATED);
     }
     @DeleteMapping("/deletetoken/{token}")
-    public ResponseEntity<ResponseDto> deleteDataByToken(@PathVariable String token){
+    public ResponseEntity<ResponceDto> deleteDataByToken(@PathVariable String token){
         String userData=userService.deletedataByToken(token);
-        ResponseDto responceDto = new ResponseDto("Data is deleted",userData);
+        ResponceDto responceDto = new ResponceDto("Data is deleted",userData);
         return new ResponseEntity<>(responceDto, HttpStatus.CREATED);
     }
 }

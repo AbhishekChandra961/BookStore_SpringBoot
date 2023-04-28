@@ -3,11 +3,11 @@ package com.bridgelabz.BookStore.dto;
 import lombok.ToString;
 
 @ToString
-public class ResponseDto {
+public class ResponceDto {
     public Object data;
     public String message;
 
-    public ResponseDto(String message,Object data) {
+    public ResponceDto(String message, Object data) {
         this.data = data;
         this.message = message;
     }

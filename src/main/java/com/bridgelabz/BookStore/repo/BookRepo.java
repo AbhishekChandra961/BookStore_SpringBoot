@@ -12,7 +12,4 @@ import java.util.List;
 public interface BookRepo extends JpaRepository<BookStore,Integer> {
     @Query(value = "SELECT * FROM bookstoreapp.book_store where name = :name",nativeQuery = true)
     List<BookStore> getBookByName(String name);
-
-    @Query(value = "select * from bookstore_db.book_store order by book_id desc", nativeQuery = true)
-    public List<Book> sortByIDDesc();
 }
