@@ -12,6 +12,7 @@ import com.bridgelabz.BookStore.util.JWTToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,79 +31,64 @@ public class CartServiceImp  implements  CartService{
 
     @Override
     public ResponceDto addCart(CartDto cartDto) {
-        int user_id=jwtToken.decodeToken(cartDto.getToken());
+        int user_id = jwtToken.decodeToken(cartDto.getToken());
         Optional<UserModel> user = userRepo.findById(user_id);//
-        if(user.isPresent()) {
-            Cart cart=cartRepo.findDataById(user_id);
+        if (user.isPresent()) {
+//            Cart cart = cartRepo.findDataById(user_id);
+            Cart dataBaseBookId=cartRepo.findBookid((int) cartDto.book_id,user_id);
+            System.out.println("the data is ---------"+dataBaseBookId);
 //            Optional<Cart> cartData=cartRepo.findById(cart.getCart_id());
-            if(cart!=null){
-                int bookId=cart.getBookStore().getBook_id();
-                System.out.println(bookId+"book id ");
-                System.out.println(bookId+" ---------  data");
-                if(cartDto.getBook_id()==bookId){
-                    System.out.println("the Book is present in "+user_id);
-                    Optional<Cart> data=cartRepo.findDataByBookId(cartDto.book_id);
-                    System.out.println("the cart data is + "+data);
-                    data.get().setQuantity(data.get().getQuantity()+cartDto.getQuantity());
-                    return new ResponceDto("the cart is added ",cartRepo.save(data.get()));
-                }else {
-                    BookStore book = bookService.getById(cartDto.getBook_id());
-                    Cart cartDta = new Cart(user.get(), book, cartDto.quantity);
+            if (dataBaseBookId !=null) {
+                System.out.println("the Book is present in " + user_id);
+                Optional<Cart> data = cartRepo.findDataByBookId(cartDto.book_id);
+                System.out.println("the cart data is + " + data);
+                data.get().setQuantity((int) (data.get().getQuantity() + cartDto.getQuantity()));
+                return new ResponceDto("the cart is added ", cartRepo.save(data.get()));
+            } else {
+                BookStore book = bookService.getById((int) cartDto.getBook_id());
+                Cart cartDta = new Cart(user.get(), book, (int) cartDto.quantity);
 
-                    return new ResponceDto("", cartRepo.save(cartDta));
-                }
-            }else {
-                BookStore book = bookService.getById(cartDto.getBook_id());
-                Cart cartDta = new Cart(user.get(), book, cartDto.quantity);
-                cartRepo.save(cartDta);
                 return new ResponceDto("", cartRepo.save(cartDta));
             }
         }
-        else{
-            return new ResponceDto("The cart is not added "," The data is not present with user ");
+        else {
+            return new ResponceDto("The cart is not added ", " The data is not present with user ");
         }
 
     }
 
     @Override
-    public ResponceDto removeCartById(int cartId) {
+    public ResponceDto removeCartById(long cartId) {
         cartRepo.deleteById(cartId);
         return new ResponceDto("The items deleted ","id"+cartId);
     }
 
     @Override
-    public Cart getById(int cart_Id) {
+    public Cart getById(long cart_Id) {
         return cartRepo.findById(cart_Id).orElseThrow(() -> new CustomeException(" Data Not found .. wih id: "+ cart_Id));
     }
     @Override
     public ResponceDto getCartByToken(String token) {
         int id=jwtToken.decodeToken(token);
         System.out.println(id+"  id");
-        int cartid=cartRepo.findIdByUserId(id);
-        System.out.println(cartid +"cart id");
-        if(cartid>0){
-            return new ResponceDto("the data ",userRepo.findById(cartid));
+        List<Cart> cartid=cartRepo.findDataByToken(id);
+//        System.out.println(cartid.getCart_id() +"cart id");
+        if(!cartid.isEmpty()){
+            return new ResponceDto("the data ",cartid);
         }else {
             return new ResponceDto("no data present with token ",null);
         }
-//        Optional<UserModel> data = userRepo.findById(id);
-//        if(data.isPresent()) {
-//            List<Cart> cartList = cartRepo.findDataByToken(id);
-//            return new ResponceDto("The data ", cartList);
-//        }else {
-//            return new ResponceDto("The data not found",id);
-//        }
     }
 
     @Override
-    public ResponceDto updateBytoken(String token,int cart_id,int quantity) {
+    public ResponceDto updateBytoken(String token,long cart_id,long quantity) {
         int id=jwtToken.decodeToken(token);
         System.out.println(id+"  id");
-        int cartid=cartRepo.findIdByUserId(id);
-        System.out.println(cartid+"  cart id");
-        Optional<Cart> data=cartRepo.findById(cartid);
-        if((data!=null)&&cartid==cart_id){
-            data.get().setQuantity(quantity);
+//        Cart cartid=cartRepo.findDataById(id);
+//        System.out.println(cartid+"  cart id");
+        Optional<Cart> data=cartRepo.findById(cart_id);
+        if((data!=null) && data.get().getUserModel().getId()==id){
+            data.get().setQuantity((int) quantity);
             return new ResponceDto("the qunatity Updated ",cartRepo.save(data.get()));
         }
         return null;

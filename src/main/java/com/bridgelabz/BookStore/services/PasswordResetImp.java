@@ -23,7 +23,7 @@ public class PasswordResetImp implements PasswordReset {
         UserModel id = userRepo.findEmail(email);
         UserModel userData = userRepo.findById(id.getId()).orElseThrow(() -> new CustomeException(" Employee Not found .. wih id: " + id));
         Optional<UserModel> data = userRepo.findById(id.getId());
-        if (id !=null) {
+        if (id ==null) {
             return "The mail is Not Registered.....";
         } else {
             int genarateOtp = (int) ((Math.random() * 9999) % 8998) + 1001;

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Cart {
     @Id
     @GeneratedValue
-    private int cart_id;
+    private long cart_id;
     @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
@@ -21,7 +21,7 @@ public class Cart {
     @JoinColumn(name = "book_id")
     private BookStore bookStore;
 
-    private int quantity;
+    private  int quantity;
     public Cart(UserModel userModel , BookStore bookStore, int quantity) {
         this.userModel = userModel;
         this.bookStore = bookStore;

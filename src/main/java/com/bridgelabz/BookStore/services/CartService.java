@@ -9,13 +9,13 @@ import java.util.List;
 public interface CartService {
     ResponceDto addCart(CartDto cartDto);
 
-    ResponceDto removeCartById(int cartId);
+    ResponceDto removeCartById(long cartId);
 
-    Cart getById(int cart_Id);
+    Cart getById(long cart_Id);
 
     ResponceDto getCartByToken(String token);
 
-    ResponceDto updateBytoken(String token, int cart_id, int quantity);
+    ResponceDto updateBytoken(String token, long cart_id,long quantity);
 
     List<Cart> getAlldata();
 }

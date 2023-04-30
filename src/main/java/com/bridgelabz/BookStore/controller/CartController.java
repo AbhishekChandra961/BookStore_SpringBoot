@@ -20,21 +20,20 @@ public class CartController {
         return cartService.addCart(cartDto);
     }
     @DeleteMapping("/deletecart/{cart_id}")
-    public ResponceDto removeCartById(@PathVariable int cart_id){
+    public ResponceDto removeCartById(@PathVariable long cart_id){
         return cartService.removeCartById(cart_id);
     }
     @GetMapping("/getcart/{cart_id}")
-    public Cart getCartById(@PathVariable int cart_id){
+    public Cart getCartById(@PathVariable long cart_id){
         return cartService.getById(cart_id);
     }
     @GetMapping("/get/{token}")
-    public ResponceDto getCartByToken(@PathVariable("token")  String token){
+    public ResponceDto getCartByToken(@PathVariable  String token){
         return cartService.getCartByToken(token);
     }
     @PutMapping("/update/{token}")
-    public  ResponceDto updateQantity(@PathVariable("token") String token,@RequestParam int cart_id, @RequestParam int quantity){
+    public  ResponceDto updateQantity(@PathVariable String token,@RequestParam long cart_id, @RequestParam long quantity){
         return cartService.updateBytoken(token,cart_id,quantity);
-
     }
     @GetMapping("/getalldata")
     public List<Cart> getAllData(){
